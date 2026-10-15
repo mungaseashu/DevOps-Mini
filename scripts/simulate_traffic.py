@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Reliability Traffic Simulator for Online Retail Application
-Simulates baseline traffic, flash sale surges, latency degradation, and error spikes.
+Reliability Traffic Simulator for CloudKicks Shoe Retail Platform
+Simulates sneaker drops, flash-sale bot rushes, latency degradation, and error spikes.
 """
 
 import sys
@@ -13,7 +13,8 @@ import urllib.error
 from concurrent.futures import ThreadPoolExecutor
 
 BASE_URL = "http://localhost:8080"
-PRODUCTS = ["PROD-001", "PROD-002", "PROD-003", "PROD-004", "PROD-005", "PROD-006"]
+SHOES = ["SHOE-001", "SHOE-002", "SHOE-003", "SHOE-004", "SHOE-005"]
+SIZES = ["US 8", "US 9", "US 9.5", "US 10", "US 10.5", "US 11", "US 12"]
 
 def send_request(url, method="GET", data=None):
     start = time.time()
@@ -32,11 +33,12 @@ def send_request(url, method="GET", data=None):
         return 0, latency_ms
 
 def simulate_order():
-    pid = random.choice(PRODUCTS)
+    shoe_id = random.choice(SHOES)
+    size = random.choice(SIZES)
     payload = {
-        "customerName": f"Shopper_{random.randint(1000, 9999)}",
-        "customerEmail": f"user{random.randint(1000, 9999)}@traffic-surge.com",
-        "items": [{"productId": pid, "quantity": random.randint(1, 3)}]
+        "customerName": f"Sneakerhead_{random.randint(1000, 9999)}",
+        "customerEmail": f"user{random.randint(1000, 9999)}@cloudkicks.io",
+        "items": [{"productId": shoe_id, "size": size, "quantity": 1}]
     }
     return send_request(f"{BASE_URL}/api/orders", method="POST", data=payload)
 
@@ -45,7 +47,7 @@ def simulate_browse():
 
 def run_traffic_surge(total_requests=100, concurrency=10):
     print("\n=======================================================")
-    print(f"  LAUNCHING FLASH SALE SURGE: {total_requests} Requests (Concurrency: {concurrency})")
+    print(f"  LAUNCHING SNEAKER DROP BOT RUSH: {total_requests} Requests (Concurrency: {concurrency})")
     print("=======================================================")
     start_total = time.time()
     latencies = []
@@ -54,7 +56,7 @@ def run_traffic_surge(total_requests=100, concurrency=10):
     with ThreadPoolExecutor(max_workers=concurrency) as executor:
         futures = []
         for _ in range(total_requests):
-            if random.random() < 0.65:
+            if random.random() < 0.70:
                 futures.append(executor.submit(simulate_order))
             else:
                 futures.append(executor.submit(simulate_browse))
@@ -70,19 +72,19 @@ def run_traffic_surge(total_requests=100, concurrency=10):
     avg_lat = sum(latencies) / len(latencies) if latencies else 0
     p95_lat = sorted(latencies)[int(len(latencies) * 0.95)] if latencies else 0
 
-    print("\n------------------ SURGE ANALYSIS REPORT ------------------")
-    print(f"Total Requests Processed : {total_requests}")
-    print(f"Duration                : {duration:.2f} seconds")
-    print(f"Throughput Rate         : {rps:.2f} Req/Sec")
-    print(f"Average Response Time   : {avg_lat:.2f} ms")
-    print(f"95th Percentile Latency : {p95_lat:.2f} ms")
-    print(f"Status Code Breakdown   : {statuses}")
-    print("-----------------------------------------------------------\n")
+    print("\n------------------ SNEAKER DROP REPORT ------------------")
+    print(f"Total Sneaker Transactions : {total_requests}")
+    print(f"Elapsed Time              : {duration:.2f} seconds")
+    print(f"Throughput Rate           : {rps:.2f} Req/Sec")
+    print(f"Average Checkout Latency  : {avg_lat:.2f} ms")
+    print(f"95th Percentile Latency   : {p95_lat:.2f} ms")
+    print(f"Status Code Breakdown     : {statuses}")
+    print("---------------------------------------------------------\n")
 
 def trigger_latency_alert():
     print("\n[!] Injecting 650ms artificial latency...")
     status, _ = send_request(f"{BASE_URL}/api/simulate/latency?delayMs=650", method="POST")
-    print(f"Status: {status}. Prometheus histogram will record >500ms SLA breach. Check Grafana Alerts!")
+    print(f"Status: {status}. Prometheus will record >500ms latency breach. Check Grafana Alerts!")
 
 def reset_simulation():
     print("\n[*] Normalizing application performance...")
@@ -90,12 +92,12 @@ def reset_simulation():
     print(f"Status: {status}. Delays cleared.")
 
 def main():
-    print("\n=== CLOUD RETAIL RELIABILITY & STRESS TESTING SUITE ===")
+    print("\n=== CLOUDKICKS SNEAKER RELIABILITY & STRESS TESTING SUITE ===")
     print("1. Run Baseline Traffic (20 requests)")
-    print("2. Run Flash Sale Surge (100 concurrent requests)")
+    print("2. Run Sneaker Drop Bot Rush (100 concurrent checkout requests)")
     print("3. Inject Latency Spike (>500ms) to trigger Grafana Alert")
     print("4. Reset System Performance to Normal")
-    print("5. Continuous Stress Loop (Simulate Black Friday)")
+    print("5. Continuous Stress Loop (Simulate Exclusive Sneaker Launch)")
     print("0. Exit")
     
     choice = input("\nSelect an option [1-5]: ").strip()
@@ -108,7 +110,7 @@ def main():
     elif choice == "4":
         reset_simulation()
     elif choice == "5":
-        print("\nStarting continuous shopping load (Press Ctrl+C to stop)...")
+        print("\nStarting continuous sneaker drop load (Press Ctrl+C to stop)...")
         try:
             while True:
                 run_traffic_surge(total_requests=30, concurrency=8)

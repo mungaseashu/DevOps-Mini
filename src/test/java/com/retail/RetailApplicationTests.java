@@ -23,18 +23,19 @@ class RetailApplicationTests {
     }
 
     @Test
-    void testCatalogInitialization() {
+    void testShoeCatalogInitialization() {
         ResponseEntity<List<Product>> response = retailController.getAllProducts();
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody().size() >= 5, "Product catalog should contain seeded products");
+        assertTrue(response.getBody().size() >= 5, "Shoe catalog should contain seeded sneakers");
     }
 
     @Test
-    void testFindProductById() {
-        ResponseEntity<Product> response = retailController.getProductById("PROD-001");
+    void testFindShoeById() {
+        ResponseEntity<Product> response = retailController.getProductById("SHOE-001");
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertEquals("MacBook Pro M3 Max", response.getBody().getName());
+        assertTrue(response.getBody().getName().contains("Air Jordan"));
+        assertNotNull(response.getBody().getAvailableSizes());
     }
 }

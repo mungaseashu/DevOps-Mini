@@ -11,12 +11,12 @@
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
       "id": 100,
-      "title": "Application Availability & Live Telemetry",
+      "title": "Sneaker Platform Health & Real-Time Sales Telemetry",
       "type": "row"
     },
     {
       "id": 1,
-      "title": "Application Availability (Health Probe)",
+      "title": "Platform Availability (K8s Health Probe)",
       "type": "stat",
       "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
       "targets": [
@@ -29,7 +29,7 @@
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            { "type": "value", "options": { "1": { "text": "HEALTHY (UP)", "color": "green" }, "0": { "text": "DOWN (ALERT)", "color": "red" } } }
+            { "type": "value", "options": { "1": { "text": "HEALTHY (UP)", "color": "green" }, "0": { "text": "OUTAGE (ALERT)", "color": "red" } } }
           ],
           "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
         }
@@ -37,13 +37,13 @@
     },
     {
       "id": 2,
-      "title": "Total Orders Confirmed",
+      "title": "Sneakers Sold (Confirmed Orders)",
       "type": "stat",
       "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
       "targets": [
         {
-          "expr": "retail_orders_total",
-          "legendFormat": "Orders",
+          "expr": "sneaker_orders_total",
+          "legendFormat": "Sneakers Sold",
           "refId": "A"
         }
       ],
@@ -56,12 +56,12 @@
     },
     {
       "id": 3,
-      "title": "Total Revenue (USD)",
+      "title": "Sneaker Sales Revenue (USD)",
       "type": "stat",
       "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
       "targets": [
         {
-          "expr": "retail_order_revenue_usd",
+          "expr": "sneaker_revenue_usd",
           "legendFormat": "Revenue",
           "refId": "A"
         }
@@ -76,13 +76,13 @@
     },
     {
       "id": 4,
-      "title": "Active Shoppers (Load)",
+      "title": "Sneaker Drop Queue (Active Shoppers)",
       "type": "stat",
       "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
       "targets": [
         {
-          "expr": "retail_active_shoppers",
-          "legendFormat": "Shoppers",
+          "expr": "sneaker_drop_waitlist_active",
+          "legendFormat": "Shoppers in Queue",
           "refId": "A"
         }
       ],
@@ -97,18 +97,18 @@
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
       "id": 101,
-      "title": "Performance, Latency & Traffic Rate",
+      "title": "Drop Traffic Throughput & Checkout Latency",
       "type": "row"
     },
     {
       "id": 5,
-      "title": "Request Rate (Requests / Sec)",
+      "title": "Traffic Throughput (Requests / Sec)",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 7 },
       "targets": [
         {
           "expr": "sum(rate(http_server_requests_seconds_count{application=\"online-retail-app\"}[30s]))",
-          "legendFormat": "Total Throughput (RPS)",
+          "legendFormat": "Throughput (RPS)",
           "refId": "A"
         }
       ],
@@ -121,7 +121,7 @@
     },
     {
       "id": 6,
-      "title": "Response Time & Latency (Max / Mean)",
+      "title": "Checkout Response Time & Latency (SLA Threshold 500ms)",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 7 },
       "targets": [
@@ -155,18 +155,18 @@
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
       "id": 102,
-      "title": "System Resources (CPU & Memory Utilization)",
+      "title": "Cluster Resource Utilization (CPU & JVM Memory)",
       "type": "row"
     },
     {
       "id": 7,
-      "title": "CPU Usage (Process vs System)",
+      "title": "CPU Usage (Process vs Host System)",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
       "targets": [
         {
           "expr": "process_cpu_usage * 100",
-          "legendFormat": "JVM Process CPU (%)",
+          "legendFormat": "Sneaker App CPU (%)",
           "refId": "A"
         },
         {
@@ -212,10 +212,10 @@
   "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["retail", "devops", "kubernetes", "sre"],
+  "tags": ["sneakers", "devops", "kubernetes", "sre", "reliability"],
   "time": { "from": "now-15m", "to": "now" },
   "timezone": "browser",
-  "title": "Online Retail Application - Reliability Dashboard",
+  "title": "CloudKicks - Shoe Retail Reliability Dashboard",
   "uid": "retail-reliability-dash",
-  "version": 1
+  "version": 2
 }

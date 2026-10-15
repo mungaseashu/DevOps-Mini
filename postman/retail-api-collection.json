@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "f58913b4-7b6a-4c28-98e3-0599a80e1a12",
-    "name": "Online Retail Application - CI/CD API Test Suite",
-    "description": "Automated Postman & Newman API Test Suite for Online Retail App CI/CD Pipeline",
+    "name": "CloudKicks Shoe Retail - CI/CD API Test Suite",
+    "description": "Automated Postman & Newman API Test Suite for CloudKicks Shoe Retail Platform",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -39,7 +39,7 @@
       }
     },
     {
-      "name": "2. Get Product Catalog",
+      "name": "2. Get Sneaker Catalog",
       "event": [
         {
           "listen": "test",
@@ -48,11 +48,11 @@
               "pm.test('Status code is 200 OK', function () {",
               "    pm.response.to.have.status(200);",
               "});",
-              "pm.test('Catalog returns non-empty list of products', function () {",
+              "pm.test('Catalog returns non-empty list of sneakers', function () {",
               "    var jsonData = pm.response.json();",
               "    pm.expect(jsonData).to.be.an('array');",
               "    pm.expect(jsonData.length).to.be.at.least(1);",
-              "    pm.environment.set('firstProductId', jsonData[0].id);",
+              "    pm.expect(jsonData[0].availableSizes).to.be.an('array');",
               "});"
             ],
             "type": "text/javascript"
@@ -70,7 +70,7 @@
       }
     },
     {
-      "name": "3. Create Retail Order (POST)",
+      "name": "3. Create Sneaker Order (POST)",
       "event": [
         {
           "listen": "test",
@@ -79,7 +79,7 @@
               "pm.test('Status code is 201 CREATED', function () {",
               "    pm.response.to.have.status(201);",
               "});",
-              "pm.test('Order returns valid ID and CONFIRMED status', function () {",
+              "pm.test('Sneaker order returns valid ID and CONFIRMED status', function () {",
               "    var jsonData = pm.response.json();",
               "    pm.expect(jsonData.orderId).to.be.a('string');",
               "    pm.expect(jsonData.status).to.eql('CONFIRMED');",
@@ -97,7 +97,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"customerName\": \"Newman Automated CI Runner\",\n  \"customerEmail\": \"newman@jenkins-pipeline.local\",\n  \"items\": [\n    {\n      \"productId\": \"PROD-001\",\n      \"quantity\": 1\n    }\n  ]\n}"
+          "raw": "{\n  \"customerName\": \"Newman Automated CI Runner\",\n  \"customerEmail\": \"newman@sneakers-ci.local\",\n  \"items\": [\n    {\n      \"productId\": \"SHOE-001\",\n      \"size\": \"US 10\",\n      \"quantity\": 1\n    }\n  ]\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/api/orders",
@@ -116,11 +116,11 @@
               "pm.test('Prometheus metrics endpoint returns 200', function () {",
               "    pm.response.to.have.status(200);",
               "});",
-              "pm.test('Metrics output contains JVM & Retail counters', function () {",
+              "pm.test('Metrics output contains JVM & Sneaker counters', function () {",
               "    var bodyText = pm.response.text();",
               "    pm.expect(bodyText).to.include('jvm_memory_used_bytes');",
               "    pm.expect(bodyText).to.include('http_server_requests_seconds_count');",
-              "    pm.expect(bodyText).to.include('retail_orders_total');",
+              "    pm.expect(bodyText).to.include('sneaker_orders_total');",
               "});"
             ],
             "type": "text/javascript"
