@@ -1,0 +1,13 @@
+{
+  "id": "e89c623d-2432-473d-8bf3-c9182319ef44",
+  "name": "Retail App Environment",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

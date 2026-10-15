@@ -1,0 +1,141 @@
+{
+  "info": {
+    "_postman_id": "f58913b4-7b6a-4c28-98e3-0599a80e1a12",
+    "name": "Online Retail Application - CI/CD API Test Suite",
+    "description": "Automated Postman & Newman API Test Suite for Online Retail App CI/CD Pipeline",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Health Check (Actuator)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Application Health is UP', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql('UP');",
+              "});",
+              "pm.test('Response time is under 500ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(500);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/actuator/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["actuator", "health"]
+        }
+      }
+    },
+    {
+      "name": "2. Get Product Catalog",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Catalog returns non-empty list of products', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    pm.expect(jsonData.length).to.be.at.least(1);",
+              "    pm.environment.set('firstProductId', jsonData[0].id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "3. Create Retail Order (POST)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 CREATED', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Order returns valid ID and CONFIRMED status', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.orderId).to.be.a('string');",
+              "    pm.expect(jsonData.status).to.eql('CONFIRMED');",
+              "    pm.expect(jsonData.totalAmount).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerName\": \"Newman Automated CI Runner\",\n  \"customerEmail\": \"newman@jenkins-pipeline.local\",\n  \"items\": [\n    {\n      \"productId\": \"PROD-001\",\n      \"quantity\": 1\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "4. Verify Prometheus Metrics Export",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Prometheus metrics endpoint returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Metrics output contains JVM & Retail counters', function () {",
+              "    var bodyText = pm.response.text();",
+              "    pm.expect(bodyText).to.include('jvm_memory_used_bytes');",
+              "    pm.expect(bodyText).to.include('http_server_requests_seconds_count');",
+              "    pm.expect(bodyText).to.include('retail_orders_total');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/actuator/prometheus",
+          "host": ["{{baseUrl}}"],
+          "path": ["actuator", "prometheus"]
+        }
+      }
+    }
+  ]
+}

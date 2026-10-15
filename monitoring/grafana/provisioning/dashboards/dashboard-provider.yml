@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: "Online Retail Dashboards"
+    orgId: 1
+    folder: "Retail Observability"
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

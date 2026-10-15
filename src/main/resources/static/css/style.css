@@ -1,0 +1,61 @@
+/* Ledgers.cloud inspired styling and animations */
+
+:root {
+    --brand-dark: #0B0F19;
+    --brand-emerald: #10B981;
+    --brand-blue: #3B82F6;
+}
+
+body {
+    background-color: var(--brand-dark);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #f8fafc;
+}
+
+/* Custom Scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Glassmorphism Cards */
+.glass-panel {
+    background: rgba(17, 24, 39, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Subtle glowing pulse */
+@keyframes glowPulse {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+    }
+}
+
+.pulse-glow {
+    animation: glowPulse 3s infinite ease-in-out;
+}
+
+/* Smooth product card transitions */
+.product-card {
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 12px 24px -10px rgba(16, 185, 129, 0.15);
+}

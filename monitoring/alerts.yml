@@ -1,0 +1,42 @@
+groups:
+  - name: retail_app_reliability_alerts
+    rules:
+      - alert: HighResponseTime
+        expr: http_server_requests_seconds_max{application="online-retail-app"} > 0.5
+        for: 10s
+        labels:
+          severity: warning
+          component: retail-api
+        annotations:
+          summary: "Abnormal Response Time Detected on Online Retail API"
+          description: "Max response time exceeded 500ms (current: {{ $value }}s) for more than 10 seconds."
+
+      - alert: ApplicationDowntime
+        expr: up{job="online-retail-app"} == 0
+        for: 10s
+        labels:
+          severity: critical
+          component: retail-app
+        annotations:
+          summary: "Online Retail Application Down"
+          description: "Health probe or metric endpoint unreachable on target instance."
+
+      - alert: High5xxErrorRate
+        expr: rate(http_server_requests_seconds_count{status=~"5..", application="online-retail-app"}[1m]) > 0.05
+        for: 10s
+        labels:
+          severity: critical
+          component: retail-api
+        annotations:
+          summary: "Elevated 5xx Server Error Rate"
+          description: "Application is returning 5xx server errors at an abnormal rate."
+
+      - alert: HighJvmMemoryUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 85
+        for: 30s
+        labels:
+          severity: warning
+          component: jvm
+        annotations:
+          summary: "High JVM Memory Utilization"
+          description: "JVM Heap usage exceeded 85%."
