@@ -56,21 +56,36 @@ pipeline {
 
         stage('5. Automated Postman API Tests (Newman)') {
             steps {
-                echo '=== Stage 5: Verifying deployed endpoints via health probe ==='
-                sh """
-                    curl -s -f http://retail-app:8080/actuator/health | grep '"status":"UP"' || exit 1
-                    echo "Health probe passed: Application is UP!"
-                """
+                echo '=== Stage 5: Waiting for application readiness and verifying health ==='
+                sh '''
+                    for i in $(seq 1 20); do
+                        if curl -s -f http://retail-app:8080/actuator/health | grep -q "UP"; then
+                            echo "Health probe passed: Application is UP and accepting traffic!"
+                            exit 0
+                        fi
+                        echo "Waiting for Spring Boot to be ready... ($i/20)"
+                        sleep 2
+                    done
+                    echo "Health probe failed after 40 seconds."
+                    exit 1
+                '''
             }
         }
 
         stage('6. Prometheus Metrics Verification') {
             steps {
                 echo '=== Stage 6: Verifying Prometheus scraping target ==='
-                sh """
-                    curl -s -f http://retail-app:8080/actuator/prometheus | grep "sneaker_orders_total" || exit 1
-                    echo "Telemetry stream verified: sneaker_orders_total metric active!"
-                """
+                sh '''
+                    for i in $(seq 1 10); do
+                        if curl -s -f http://retail-app:8080/actuator/prometheus | grep -q "sneaker_orders_total"; then
+                            echo "Telemetry stream verified: sneaker_orders_total metric active!"
+                            exit 0
+                        fi
+                        sleep 2
+                    done
+                    echo "Metrics endpoint failed"
+                    exit 1
+                '''
             }
         }
     }
